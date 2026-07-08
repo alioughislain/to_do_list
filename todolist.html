@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TO DO LIST</title>
+    <style>
+      /* ===== STYLES ===== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        gap: 10%;
+        flex-wrap: wrap;
+        padding: 20px;
+      }
+
+      .listtask {
+        background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        border-radius: 15px;
+        padding: 40px;
+        min-width: 350px;
+        max-width: 500px;
+        width: 100%;
+      }
+
+      .listtask h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        padding-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      #tasklist {
+        list-style: none;
+        padding: 0;
+        max-height: 400px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+      }
+
+      #tasklist li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        background: white;
+        border-radius: 8px;
+        border-left: 4px solid #4caf50;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      #tasklist li .task-text {
+        flex: 1;
+        word-break: break-word;
+      }
+
+      .delete-btn {
+        background-color: #ff4444;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .delete-btn:hover {
+        background-color: #cc0000;
+        transform: scale(1.1);
+      }
+
+      .clear-all-btn {
+        width: 100%;
+        padding: 12px;
+        background: #ff6b6b;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .clear-all-btn:hover {
+        background: #ee5a24;
+        transform: scale(1.02);
+      }
+
+      .formtask {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        border-radius: 15px;
+        padding: 40px;
+        min-width: 300px;
+        max-width: 400px;
+        width: 100%;
+      }
+
+      .formtask h1 {
+        font-size: 24px;
+        margin-bottom: 25px;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        padding-bottom: 15px;
+      }
+
+      input {
+        width: 100%;
+        height: 45px;
+        padding: 0 15px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        font-size: 16px;
+        background: rgba(255, 255, 255, 0.9);
+        transition: all 0.3s ease;
+        margin-bottom: 15px;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #4caf50;
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        background: white;
+      }
+
+      .hint {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.6);
+        margin-top: 5px;
+        text-align: right;
+      }
+
+      #ajouter {
+        width: 100%;
+        height: 45px;
+        cursor: pointer;
+        border-radius: 8px;
+        border: none;
+        font-size: 16px;
+        font-weight: bold;
+        background: linear-gradient(135deg, #4caf50, #45a049);
+        color: white;
+        transition: all 0.3s ease;
+      }
+
+      #ajouter:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+      }
+
+      .counter {
+        font-size: 14px;
+        background: rgba(0, 0, 0, 0.1);
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: normal;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+          gap: 30px;
+          padding: 30px 20px;
+        }
+
+        .listtask,
+        .formtask {
+          min-width: unset;
+          width: 100%;
+          padding: 25px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- SECTION LISTE -->
+      <div class="listtask" id="listtask">
+        <h1>
+          📋 Liste des tâches
+          <span id="taskCounter" class="counter">0 tâche</span>
+        </h1>
+        <ol id="tasklist"></ol>
+        <button id="clearAll" class="clear-all-btn">
+          🗑️ Supprimer toutes les tâches
+        </button>
+      </div>
+
+      <!-- SECTION FORMULAIRE -->
+      <div class="formtask">
+        <h1>➕ Ajouter une tâche</h1>
+        <input
+          type="text"
+          id="tache_saisir"
+          placeholder="Entrez votre tâche ici..."
+          aria-label="Saisir une nouvelle tâche"
+          autofocus
+          required
+        />
+        <button id="ajouter">📥 Ajouter</button>
+        <p class="hint">⭐ Minimum 3 caractères requis</p>
+      </div>
+    </div>
+
+    <!-- ===== JAVASCRIPT INTÉGRÉ (tout en un) ===== -->
+    <script>
+      // ============================================
+      // TO-DO LIST - Code JavaScript complet
+      // ============================================
+
+      // === 1. RÉFÉRENCES ===
+      const tasklist = document.getElementById("tasklist");
+      const taskInput = document.getElementById("tache_saisir");
+      const addButton = document.getElementById("ajouter");
+      const clearAllButton = document.getElementById("clearAll");
+      const taskCounter = document.getElementById("taskCounter");
+
+      // === 2. CHARGEMENT DES DONNÉES ===
+      let tasks = [];
+
+      function loadTasks() {
+        try {
+          const stored = localStorage.getItem("tasks");
+          if (stored) {
+            tasks = JSON.parse(stored);
+            if (!Array.isArray(tasks)) tasks = [];
+          }
+        } catch (e) {
+          console.error("Erreur chargement:", e);
+          tasks = [];
+        }
+      }
+
+      function saveTasks() {
+        try {
+          localStorage.setItem("tasks", JSON.stringify(tasks));
+        } catch (e) {
+          console.error("Erreur sauvegarde:", e);
+        }
+      }
+
+      // === 3. AFFICHAGE ===
+      function renderTasks() {
+        tasklist.innerHTML = "";
+
+        if (tasks.length === 0) {
+          const emptyLi = document.createElement("li");
+          emptyLi.textContent = "📭 Aucune tâche pour le moment";
+          emptyLi.style.textAlign = "center";
+          emptyLi.style.color = "#666";
+          emptyLi.style.fontStyle = "italic";
+          emptyLi.style.background = "transparent";
+          emptyLi.style.borderLeft = "none";
+          emptyLi.style.boxShadow = "none";
+          tasklist.appendChild(emptyLi);
+        } else {
+          tasks.forEach((taskText, index) => {
+            const li = document.createElement("li");
+
+            const textSpan = document.createElement("span");
+            textSpan.className = "task-text";
+            textSpan.textContent = taskText;
+            li.appendChild(textSpan);
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "✕";
+            deleteBtn.className = "delete-btn";
+            deleteBtn.title = `Supprimer : ${taskText}`;
+            deleteBtn.addEventListener("click", () => {
+              deleteTask(index);
+            });
+
+            li.appendChild(deleteBtn);
+            tasklist.appendChild(li);
+          });
+        }
+
+        updateCounter();
+      }
+
+      function updateCounter() {
+        const count = tasks.length;
+        if (count === 0) {
+          taskCounter.textContent = "0 tâche";
+        } else if (count === 1) {
+          taskCounter.textContent = "1 tâche";
+        } else {
+          taskCounter.textContent = `${count} tâches`;
+        }
+      }
+
+      // === 4. FONCTIONS PRINCIPALES ===
+      function addTask() {
+        const newTaskText = taskInput.value.trim();
+
+        if (newTaskText.length === 0) {
+          alert("⚠️ Veuillez entrer une tâche.");
+          taskInput.focus();
+          return;
+        }
+
+        if (newTaskText.length <= 3) {
+          alert(
+            "❌ TÂCHE INCORRECTE ! La tâche doit contenir plus de 3 caractères.",
+          );
+          taskInput.focus();
+          return;
+        }
+
+        tasks.push(newTaskText);
+        saveTasks();
+        taskInput.value = "";
+        renderTasks();
+        taskInput.focus();
+      }
+
+      function deleteTask(index) {
+        if (index < 0 || index >= tasks.length) {
+          console.error("Index invalide:", index);
+          return;
+        }
+
+        const taskToDelete = tasks[index];
+        if (
+          !confirm(`Êtes-vous sûr de vouloir supprimer :\n"${taskToDelete}" ?`)
+        ) {
+          return;
+        }
+
+        tasks.splice(index, 1);
+        saveTasks();
+        renderTasks();
+      }
+
+      function clearAllTasks() {
+        if (tasks.length === 0) {
+          alert("ℹ️ Aucune tâche à supprimer.");
+          return;
+        }
+
+        if (
+          !confirm(
+            `⚠️ Supprimer toutes les ${tasks.length} tâches ?\nCette action est irréversible.`,
+          )
+        ) {
+          return;
+        }
+
+        tasks = [];
+        saveTasks();
+        renderTasks();
+      }
+
+      // === 5. ÉVÉNEMENTS ===
+      addButton.addEventListener("click", addTask);
+
+      taskInput.addEventListener("keypress", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          addTask();
+        }
+      });
+
+      clearAllButton.addEventListener("click", clearAllTasks);
+
+      // === 6. INITIALISATION ===
+      document.addEventListener("DOMContentLoaded", () => {
+        loadTasks();
+        renderTasks();
+        taskInput.focus();
+        console.log("✅ To-Do List chargée !");
+        console.log(`📊 ${tasks.length} tâches en mémoire`);
+      });
+
+      // Rendre les fonctions globales pour le débogage
+      window.addTask = addTask;
+      window.deleteTask = deleteTask;
+      window.clearAllTasks = clearAllTasks;
+    </script>
+  </body>
+</html>
