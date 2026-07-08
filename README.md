@@ -48,7 +48,6 @@ Une application web de **liste de tâches** complète et intuitive, développée
 
 ## 🚀 Installation
 
-```bash
-git clone https://github.com/votre-username/todolist.git
+
 cd todolist
 # Ouvrez index.html dans votre navigateur
